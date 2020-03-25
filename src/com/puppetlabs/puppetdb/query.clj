@@ -354,7 +354,7 @@
       (throw (IllegalArgumentException. (format "The argument to extract must be a select operator, not '%s'" (first subquery)))))
     (when-not (get (queryable-fields subquery-type query-api-version) field)
       (throw (IllegalArgumentException. (format "Can't extract unknown %s field '%s'. Acceptable fields are: %s" (name subquery-type) field (string/join ", " (sort (queryable-fields subquery-type query-api-version)))))))
-    {:where (format "SELECT r1.%s FROM (%s) r1" field subselect)
+    {:where (format "SELECT DISTINCT r1.%s FROM (%s) r1" field subselect)
      :params params}))
 
 (defn compile-in
