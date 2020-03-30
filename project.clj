@@ -9,8 +9,9 @@
      []
      (if (.exists (file "version"))
        (s/trim (slurp "version"))
-       (let [command                ["rake" "package:version" "-s"]
-             {:keys [exit out err]} (apply sh command)]
+       (let [command                ["rake" "version" "-s"]
+             {:keys [exit out err]} (try (apply sh command)
+                                         (catch java.io.IOException e {:exit 1}))]
          (if (zero? exit)
            (s/trim out)
            "0.0-dev-build"))))))
