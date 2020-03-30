@@ -50,7 +50,7 @@ node {
 // and returns the tests against that
 def test() {
     docker.withRegistry('https://registry.internal.exoscale.ch') {
-        def clojure = docker.image('registry.internal.exoscale.ch/exoscale/clojure:cosmic') // Is this the image we want to use?
+        def clojure = docker.image('registry.internal.exoscale.ch/exoscale/clojure:bionic') // Is this the image we want to use?
         clojure.pull()
         try {
             clojure.inside('-u root --net host -v /home/exec/.m2/repository:/root/.m2/repository -v /etc/puppet/ssl:/etc/puppet/ssl') {
@@ -65,7 +65,7 @@ def test() {
 
 def build() {
     docker.withRegistry('https://registry.internal.exoscale.ch') {
-        def clojure = docker.image('registry.internal.exoscale.ch/exoscale/clojure:cosmic')
+        def clojure = docker.image('registry.internal.exoscale.ch/exoscale/clojure:bionic')
         clojure.pull()
         clojure.inside('-u root -v /home/exec/.m2/repository:/root/.m2/repository') {
             // Checking if rake works
