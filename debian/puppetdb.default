@@ -1,0 +1,11 @@
+###########################################
+# Init settings for puppetdb
+###########################################
+
+JAVA_BIN="/usr/bin/java"
+JAVA_ARGS="-Xmx1g -Djava.security.egd=file:/dev/urandom"
+
+# These normally shouldn't need to be edited if using OS packages
+USER="puppetdb"
+INSTALL_DIR="/usr/share/puppetdb"
+CONFIG="/etc/puppetdb/conf.d"
