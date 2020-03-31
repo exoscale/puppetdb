@@ -20,7 +20,7 @@ node {
                  test()
              }
 
-             stage('Build uberjar') {
+             stage('Build tarball') {
                  build()
              }
 
@@ -67,10 +67,11 @@ def build() {
     docker.withRegistry('https://registry.internal.exoscale.ch') {
         def clojure = docker.image('registry.internal.exoscale.ch/exoscale/clojure:bionic')
         clojure.pull()
-        clojure.inside('-u root -v /home/exec/.m2/repository:/root/.m2/repository') {
-            // Checking if rake works
-            sh 'rake clean'
+        clojure.inside('-u root -v /home/exec/.m2/repository:/root/.m2/repository -e "USER=jenkins"') {
+            sh 'apt-get update && apt-get install -y ruby-puppetlabs-spec-helper'
+            sh 'gem install packaging'
             sh 'rake package:tar'
+            sh 'cp pkg/*.tar.gz ./'
         }
     }
 }

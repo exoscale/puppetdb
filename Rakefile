@@ -1,6 +1,7 @@
 require 'rake'
 require 'erb'
 require 'facter'
+require 'packaging'
 
 JAR_FILE = 'puppetdb.jar'
 
