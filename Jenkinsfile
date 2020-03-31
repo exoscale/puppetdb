@@ -25,7 +25,7 @@ node {
              }
 
              stage('Build package') {
-                 gitPbuilder('xenial', true, '../build-area-xenial')
+                 gitBuildPackage('xenial', false, false, false, '../build-area-xenial')
              }
 
              stage('Upload package') {
@@ -69,9 +69,9 @@ def build() {
         clojure.pull()
         clojure.inside('-u root -v /home/exec/.m2/repository:/root/.m2/repository -e "USER=jenkins"') {
             sh 'apt-get update && apt-get install -y ruby-puppetlabs-spec-helper'
-            sh 'gem install packaging'
+            sh 'rake package:bootstrap'
             sh 'rake package:tar'
-            sh 'cp pkg/*.tar.gz ./'
+            sh 'cp pkg/*.tar.gz ./puppetdb_$(rake version | tr -d "v").orig.tar.gz'
         }
     }
 }
