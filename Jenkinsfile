@@ -24,13 +24,13 @@ node {
                  build()
              }
 
-             stage('Build package') {
-                 gitBuildPackage('xenial', false, false, false, '../build-area-xenial')
-             }
+             // stage('Build package') {
+             //     gitBuildPackage('xenial', false, false, false, '../build-area-xenial')
+             // }
 
-             stage('Upload package') {
-                 aptlyUpload('xenial', 'main', '../build-area-xenial/*.deb')
-             }
+             // stage('Upload package') {
+             //     aptlyUpload('xenial', 'main', '../build-area-xenial/*.deb')
+             // }
 
          }
      } catch (err) {
