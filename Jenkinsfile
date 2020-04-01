@@ -69,9 +69,10 @@ def build() {
         clojure.pull()
         clojure.inside('-u root -v /home/exec/.m2/repository:/root/.m2/repository -e "USER=jenkins"') {
             sh 'apt-get update && apt-get install -y ruby-puppetlabs-spec-helper'
-            sh 'rake clobber'
+            sh 'rake package:bootstrap'
             sh 'rake uberjar'
             sh 'rake template'
+            sh 'rm -rf ./ext/packaging'
             sh 'find ./ext/files -type f -not -perm /o+r -exec chmod a+r {} \\; -print'
         }
     }
