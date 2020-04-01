@@ -16,9 +16,9 @@ node {
 
              updateGithubCommitStatus('PENDING', "${env.WORKSPACE}/src")
 
-             stage('test') {
-                 test()
-             }
+             //stage('test') {
+             //    test()
+             //}
 
              stage('Build uberjar') {
                  build()
@@ -71,7 +71,7 @@ def build() {
             sh 'apt-get update && apt-get install -y ruby-puppetlabs-spec-helper'
             sh 'rake package:implode'
             sh 'rake package:bootstrap'
-            sh 'mkdir ./dummy && rake install PARAMS_FILE= DESTDIR=./dummy'
+            sh 'rake template'
         }
     }
 }
