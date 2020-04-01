@@ -72,6 +72,7 @@ def build() {
             sh 'rake package:implode'
             sh 'rake package:bootstrap'
             sh 'rake template'
+            sh 'rm -rf ./ext/packaging'
             sh 'find ./ext/files -type f -not -perm /o+r -exec chmod a+r {} \\; -print'
         }
     }
