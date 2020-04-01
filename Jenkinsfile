@@ -16,9 +16,9 @@ node {
 
              updateGithubCommitStatus('PENDING', "${env.WORKSPACE}/src")
 
-             //stage('test') {
-             //    test()
-             //}
+             stage('test') {
+                 test()
+             }
 
              stage('Build uberjar') {
                  build()
@@ -63,6 +63,7 @@ def test() {
     }
 }
 
+// Build to a state similar to what is packaged in the tarball (cf. tasks/tar.rake)
 def build() {
     docker.withRegistry('https://registry.internal.exoscale.ch') {
         def clojure = docker.image('registry.internal.exoscale.ch/exoscale/clojure:bionic')
