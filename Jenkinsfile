@@ -70,6 +70,7 @@ def build() {
         clojure.inside('-u root -v /home/exec/.m2/repository:/root/.m2/repository -e "USER=jenkins"') {
             sh 'apt-get update && apt-get install -y ruby-puppetlabs-spec-helper'
             sh 'rake uberjar'
+            sh 'mkdir ./dummy && rake install PARAMS_FILE= DESTDIR=./dummy'
         }
     }
 }
