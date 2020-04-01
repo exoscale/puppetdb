@@ -4,14 +4,15 @@ node {
      cleanWs()
 
      try {
-         def image
          def gitTag
+         def gitBranch
 
          dir('src') {
 
              stage('SCM') {
                  checkout scm
                  gitTag = getGitTag()
+                 gitBranch = getGitBranch()
              }
 
              updateGithubCommitStatus('PENDING', "${env.WORKSPACE}/src")
@@ -20,17 +21,21 @@ node {
                  test()
              }
 
-             stage('Build tarball') {
+             stage('Build uberjar') {
                  build()
              }
 
-             // stage('Build package') {
-             //     gitBuildPackage('xenial', false, false, false, '../build-area-xenial')
-             // }
+             if (gitBranch.startsWith("xenial")) {
+                 stage('Build package') {
+                     gitPbuilder('xenial', false, '../build-area-xenial')
+                 }
 
-             // stage('Upload package') {
-             //     aptlyUpload('xenial', 'main', '../build-area-xenial/*.deb')
-             // }
+                 if (gitTag != null) {
+                     stage('Upload package') {
+                         aptlyUpload('staging', 'xenial', 'main', '../build-area-xenial/*.deb')
+                     }
+                 }
+             }
 
          }
      } catch (err) {
@@ -50,7 +55,7 @@ node {
 // and returns the tests against that
 def test() {
     docker.withRegistry('https://registry.internal.exoscale.ch') {
-        def clojure = docker.image('registry.internal.exoscale.ch/exoscale/clojure:bionic') // Is this the image we want to use?
+        def clojure = docker.image('registry.internal.exoscale.ch/exoscale/clojure:bionic')
         clojure.pull()
         try {
             clojure.inside('-u root --net host -v /home/exec/.m2/repository:/root/.m2/repository -v /etc/puppet/ssl:/etc/puppet/ssl') {
@@ -68,10 +73,18 @@ def build() {
         def clojure = docker.image('registry.internal.exoscale.ch/exoscale/clojure:bionic')
         clojure.pull()
         clojure.inside('-u root -v /home/exec/.m2/repository:/root/.m2/repository -e "USER=jenkins"') {
+            // Installs the necessary dependencies. Can be put into a base image if we end up running this frequently
             sh 'apt-get update && apt-get install -y ruby-puppetlabs-spec-helper'
+            // Downloads the packaging ruby gem in a distribution agnostic way (needed for the rake template step)
             sh 'rake package:bootstrap'
-            sh 'rake package:tar'
-            sh 'cp pkg/*.tar.gz ./puppetdb_$(rake version | tr -d "v").orig.tar.gz'
+            // Builds the binary
+            sh 'rake uberjar'
+            // Creates the various distribution config files
+            sh 'rake template'
+            // Remove the original templates of the config files (confuses the debian package builder if they are still around)
+            sh 'rm -rf ./ext/packaging'
+            // Ensure all file permissions are set correctly, to avoid problems when building the debian package
+            sh 'find ./ext/files -type f -not -perm /o+r -exec chmod a+r {} \\; -print'
         }
     }
 }

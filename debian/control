@@ -9,6 +9,7 @@ Build-Depends: debhelper (>= 7.0.0~),
                mawk,
                lsb-release,
                rake,
+               git,
                facter (>= 1.7.0),
                puppet-common (>= 3.5.1)
 Standards-Version: 3.9.1
