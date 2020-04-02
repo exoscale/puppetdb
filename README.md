@@ -7,7 +7,6 @@ Exoscale
 This fork contains the version of puppetdb 2.3.x for internal use at Exoscale.
 
 The Jenkinsfile is a good reference for instructions on how to test and build this repository.
-The service is deployed a debian package which is produced by this companion repository: https://github.com/exoscale/pkg-puppetdb . The tarball in that repository is produced by the build scripts and source code in this repository.
 
 ### Testing
 Run java integration tests with an embedded database:
@@ -16,7 +15,7 @@ Run java integration tests with an embedded database:
 lein test
 ```
 
-Run java integration tests with an external postgres database (assumes docker is installed):
+Run java integration tests with an external postgres database (this step is currently not executed by jenkins):
 
 **Dockerfile**
 
@@ -52,21 +51,15 @@ services:
       POSTGRES_DB: puppetdbtest
 ```
 
-### Build tarball
-The tarball used to build the debian package in https://github.com/exoscale/pkg-puppetdb is produced as follows (this assumes clojure, lein and ruby are installed, see the Jenkinsfile for how to construct a reproducable environment):
+### Debian packaging
+Debian packages of puppetdb can be built using Jenkins. By default only the testing and compilation stages will be run.
 
-```bash
-# Install a vendored version of the packaging gem without relying on the host distribution
-rake package:bootstrap
-# Ensure an explicit user is set (useful inside a docker container which typically don't set these environment variables)
-export USER=builder
-# Produce the tarball
-rake package:tar
-# Move the tarball to the root and rename it to the structure the deb toolchain expects
-mv pkg/*.tar.gz ./puppetdb_$(rake version | tr -d 'v').orig.tar.gz
+The debian packages will only be built for commits on branches starting with `xenial`. If the commit is also tagged, the resulting package will be uploaded to the `staging` repository.
+
+Promoting a package from `staging` to `prod`, can be done using sheldon:
 ```
-
-Once the tarball is produced, it should be manually copied to the pkg-puppetdb repo and checked in there. See the instructions in `debian/README.md` of that repository for how to produce a deb package with a new version number from this tarball.
+apt promote with <codename> <package>, engage!
+```
 
 
 General Information
