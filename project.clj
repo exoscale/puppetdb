@@ -9,8 +9,9 @@
      []
      (if (.exists (file "version"))
        (s/trim (slurp "version"))
-       (let [command                ["rake" "package:version" "-s"]
-             {:keys [exit out err]} (apply sh command)]
+       (let [command                ["rake" "version" "-s"]
+             {:keys [exit out err]} (try (apply sh command)
+                                         (catch java.io.IOException e {:exit 1}))]
          (if (zero? exit)
            (s/trim out)
            "0.0-dev-build"))))))
@@ -33,7 +34,7 @@
                  [org.clojure/math.combinatorics "0.0.4"]
                  [org.clojure/math.numeric-tower "0.0.4"]
                  [org.clojure/tools.logging "0.2.6"]
-                 [org.clojure/tools.nrepl "0.2.3"]
+                 [org.clojure/tools.nrepl "0.2.13"]
                  [puppetlabs/tools.namespace "0.2.4.1"]
                  [vimclojure/server "2.3.6" :exclusions [org.clojure/clojure]]
                  [clj-stacktrace "0.2.6"]
@@ -54,7 +55,7 @@
                  [org.clojure/java.jdbc "0.1.1"]
                  [org.hsqldb/hsqldb "2.2.8"]
                  [org.postgresql/postgresql "9.2-1003-jdbc4"]
-                 [clojureql "1.0.3"]
+                 [clojureql "1.0.5" :exclusions [org.clojure/clojure org.clojure/java.jdbc]]
                  ;; MQ connectivity
                  [clamq/clamq-activemq "0.4" :exclusions [org.slf4j/slf4j-api]]
                  [org.apache.activemq/activemq-core "5.6.0" :exclusions [org.slf4j/slf4j-api org.fusesource.fuse-extra/fusemq-leveldb]]

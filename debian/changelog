@@ -1,0 +1,40 @@
+puppetdb (2.3.10-1puppetlabs1+xenial0+exo0) xenial; urgency=medium
+
+  * Improve fact retrieval performance.
+
+ -- Wouter Dullaert <wouter.dullaert@exoscale.ch>  Tue, 31 Mar 2020 14:40:00 +0100
+
+puppetdb (2.3.8-1puppetlabs1+xenial0+exo5) xenial; urgency=medium
+
+  * Automatically restart on failure.
+
+ -- Vincent Bernat <bernat@debian.org>  Wed, 17 Jan 2018 10:12:09 +0100
+
+puppetdb (2.3.8-1puppetlabs1+xenial0+exo4) xenial; urgency=medium
+
+  * Don't use ${JAVA_BIN} with systemd.
+
+ -- Vincent Bernat <bernat@debian.org>  Mon, 01 Jan 2018 09:56:39 +0100
+
+puppetdb (2.3.8-1puppetlabs1+xenial0+exo3) xenial; urgency=medium
+
+  * Don't use XX:+HeapDumpOnOutOfMemoryError.
+  * Don't try to be smart to find Java.
+
+ -- Vincent Bernat <bernat@debian.org>  Mon, 01 Jan 2018 09:50:32 +0100
+
+puppetdb (2.3.8-1puppetlabs1+xenial0+exo2) xenial; urgency=medium
+
+  * Fix systemd unit file.
+
+ -- Vincent Bernat <bernat@debian.org>  Tue, 19 Dec 2017 14:50:23 +0100
+
+puppetdb (2.3.8-1puppetlabs1+xenial0+exo1) xenial; urgency=medium
+
+  * Forward-port to Xenial.
+     - Depends/Build-Depends on puppet-common instead of puppet.
+     - Do not build puppetdb-terminus.
+     - Use debhelper to generate parts of {pre,post}{inst,rm}.
+     - Add a systemd service file.
+
+ -- Vincent Bernat <bernat@debian.org>  Tue, 19 Dec 2017 11:10:34 +0100
