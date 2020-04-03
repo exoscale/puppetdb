@@ -6,13 +6,21 @@ node {
      try {
          def gitTag
          def gitBranch
+         def onXenialBranch
 
          dir('src') {
 
              stage('SCM') {
                  checkout scm
                  gitTag = getGitTag()
-                 gitBranch = getGitBranch()
+                 gitBranch = params.REF
+                 // Returns true if the current commit is present on a remote
+                 // branch containing "xenial", even if that is not the branch that
+                 // triggered the job
+                 onXenialBranch = Integer.parseInt(sh(returnStdout: true, script: "git branch -r --contains | grep xenial | wc -l").trim()) > 0
+                 echo gitTag
+                 echo gitBranch
+                 echo Boolean.toString(onXenialBranch)
              }
 
              updateGithubCommitStatus('PENDING', "${env.WORKSPACE}/src")
@@ -25,15 +33,17 @@ node {
                  build()
              }
 
-             if (gitBranch.startsWith("xenial")) {
+             // When building a tag params.REF is set to the tag name
+             // We therefore check if the commit is also on a xenial branch when building a tagged commit
+             if (gitTag != "" && onXenialBranch || gitBranch.startsWith("xenial")) {
                  stage('Build package') {
                      gitPbuilder('xenial', false, '../build-area-xenial')
                  }
+             }
 
-                 if (gitTag != null) {
-                     stage('Upload package') {
-                         aptlyUpload('staging', 'xenial', 'main', '../build-area-xenial/*.deb')
-                     }
+             if (gitTag != "" && onXenialBranch) {
+                 stage('Upload package') {
+                     aptlyUpload('staging', 'xenial', 'main', '../build-area-xenial/*.deb')
                  }
              }
 
